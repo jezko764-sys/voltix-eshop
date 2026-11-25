@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOLTIX — Moderná elektronika, overené parametre</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --surface: #121826;
+      --surface-2: #192236;
+      --border: #26324d;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(11, 15, 23, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .header-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+    }
+
+    .brand p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: 0.15s ease;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #061018;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    button.primary:hover {
+      filter: brightness(1.08);
+    }
+
+    button.active {
+      background: var(--accent);
+      color: #061018;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0 12px;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .search-sort {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    input, select, textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+      gap: 18px;
+      padding: 16px 0 40px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .spec {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .price {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .price-vat {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .compare-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 32px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface-2);
+    }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: none;
+      justify-content: flex-end;
+      z-index: 50;
+    }
+
+    .drawer-backdrop.open {
+      display: flex;
+    }
+
+    .drawer {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      height: 100%;
+      overflow-y: auto;
+      padding: 22px;
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .cart-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .summary-box {
+      background: var(--surface-2);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 0.9rem;
+      display: grid;
+      gap: 6px;
+    }
+
+    .free-shipping {
+      color: var(--accent-2);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .order-form {
+      display: grid;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    .order-confirmation {
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid var(--accent-2);
+      color: #dcfce7;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <div class="brand">
+        <h1>VOLTIX</h1>
+        <p>Moderná elektronika, overené parametre</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" id="toggle-compare-btn">Porovnanie (<span id="compare-count">0</span>/3)</button>
+        <button type="button" class="primary" id="open-cart-btn">
+          Košík (<span id="cart-count">0</span>) · <span id="cart-total">0,00 €</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <div class="categories" id="category-buttons">
+        <button type="button" data-category="all" class="active">Všetko</button>
+        <button type="button" data-category="smartfony-audio">Smartfóny a audio</button>
+        <button type="button" data-category="komponenty-pc">Komponenty a PC</button>
+        <button type="button" data-category="napajanie">Napájanie a príslušenstvo</button>
+        <button type="button" data-category="smart-domacnost">Smart domácnosť</button>
+      </div>
+
+      <div class="search-sort">
+        <input type="search" id="search-input" placeholder="Hľadať (napr. OLED, 100W, SSD)..." />
+        <select id="sort-select">
+          <option value="default">Zoradiť: Odporúčané</option>
+          <option value="price-asc">Cena: od najnižšej</option>
+          <option value="price-desc">Cena: od najvyššej</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="compare-box" id="compare-section" hidden>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+        <h2>Porovnanie vybraných produktov</h2>
+        <button type="button" id="clear-compare-btn">Vymazať výber</button>
+      </div>
+      <div id="compare-table-wrap"></div>
+    </section>
+
+    <section class="grid" id="product-grid"></section>
+  </main>
+
+  <div class="drawer-backdrop" id="cart-drawer">
+    <aside class="drawer">
+      <div class="drawer-header">
+        <h2>Nákupný košík</h2>
+        <button type="button" id="close-cart-btn">Zavrieť</button>
+      </div>
+
+      <div id="cart-items" style="display:grid; gap:10px;"></div>
+
+      <div class="summary-box" id="cart-summary"></div>
+
+      <form class="order-form" id="order-form">
+        <h3>Rýchla objednávka</h3>
+        <input type="text" name="fullname" placeholder="Meno a priezvisko" required />
+        <input type="email" name="email" placeholder="E-mail na potvrdenie" required />
+        <input type="text" name="address" placeholder="Ulica, číslo domu, PSČ, mesto" required />
+        <select name="shipping">
+          <option value="Packeta výdajné miesto (3,20 €)">Doprava: Packeta výdajné miesto</option>
+          <option value="Kuriér na adresu (4,90 €)">Doprava: Kuriér na adresu</option>
+        </select>
+        <select name="payment">
+          <option value="Platba kartou online">Platba: Kartou online</option>
+          <option value="Dobierka">Platba: Dobierka</option>
+        </select>
+        <button type="submit" class="primary">Odoslať objednávku</button>
+      </form>
+
+      <div id="order-result"></div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="container">
+      VOLTIX · Moderná elektronika, overené parametre · Ceny vrátane 23 % DPH
+    </div>
+  </footer>
+
+  <script>
+    const VAT_RATE = 0.23;
+    const FREE_SHIPPING_LIMIT = 80;
+
+    const PRODUCTS = [
+      {
+        id: 1,
+        name: "Voltix Phone X1 256GB",
+        category: "smartfony-audio",
+        categoryLabel: "Smartfóny a audio",
+        price: 649.00,
+        spec: "6.7\" OLED 120Hz, 5000 mAh, 5G",
+        warranty: "24 mesiacov"
+      },
+      {
+        id: 2,
+        name: "Voltix Buds Pro ANC",
+        category: "smartfony-audio",
+        categoryLabel: "Smartfóny a audio",
+        price: 129.00,
+        spec: "Aktívne potlačenie hluku, výdrž 32h, USB-C",
+        warranty: "24 mesiacov"
+      },
+      {
+        id: 3,
+        name: "NVMe SSD 2TB PCIe 4.0",
+        category: "komponenty-pc",
+        categoryLabel: "Komponenty a PC",
+        price: 144.00,
+        spec: "Čítanie až 7400 MB/s, M.2 2280, NVMe",
+        warranty: "60 mesiacov"
+      },
+      {
+        id: 4,
+        name: "Mechanická klávesnica VX85",
+        category: "komponenty-pc",
+        categoryLabel: "Komponenty a PC",
+        price: 119.00,
+        spec: "Hot-swap spínače, 2.4GHz + Bluetooth + USB-C",
+        warranty: "24 mesiacov"
+      },
+      {
+        id: 5,
+        name: "GaN Nabíjačka 100W 4-Port",
+        category: "napajanie",
+        categoryLabel: "Napájanie a príslušenstvo",
+        price: 54.50,
+        spec: "3x USB-C PD 100W + 1x USB-A, GaN technológia",
+        warranty: "36 mesiacov"
+      },
+      {
+        id: 6,
+        name: "Powerbanka 20 000 mAh 65W",
+        category: "napajanie",
+        categoryLabel: "Napájanie a príslušenstvo",
+        price: 69.00,
+        spec: "Nabije notebook aj telefón, LED displej, USB-C",
+        warranty: "24 mesiacov"
+      },
+      {
+        id: 7,
+        name: "Smart LED Senzorový Pás 5m",
+        category: "smart-domacnost",
+        categoryLabel: "Smart domácnosť",
+        price: 39.90,
+        spec: "Wi-Fi + Matter, RGBIC, hlasové ovládanie",
+        warranty: "24 mesiacov"
+      },
+      {
+        id: 8,
+        name: "Smart Termostatická Hlavica",
+        category: "smart-domacnost",
+        categoryLabel: "Smart domácnosť",
+        price: 49.00,
+        spec: "Zigbee / Wi-Fi hub, týždenný rozvrh, tichý chod",
+        warranty: "24 mesiacov"
+      }
+    ];
+
+    let state = {
+      category: "all",
+      search: "",
+      sort: "default",
+      cart: JSON.parse(localStorage.getItem("voltix_cart") || "[]"),
+      compareIds: []
+    };
+
+    const formatEur = (amount) =>
+      `${Number(amount).toFixed(2).replace(".", ",")} €`;
+
+    const saveCart = () => {
+      localStorage.setItem("voltix_cart", JSON.stringify(state.cart));
+    };
+
+    const getVisibleProducts = () => {
+      const q = state.search.trim().toLowerCase();
+      let list = PRODUCTS.filter((p) => {
+        const catOk = state.category === "all" || p.category === state.category;
+        const qOk =
+          !q ||
+          p.name.toLowerCase().includes(q) ||
+          p.spec.toLowerCase().includes(q) ||
+          p.categoryLabel.toLowerCase().includes(q);
+        return catOk && qOk;
+      });
+
+      if (state.sort === "price-asc") {
+        list = [...list].sort((a, b) => a.price - b.price);
+      } else if (state.sort === "price-desc") {
+        list = [...list].sort((a, b) => b.price - a.price);
+      }
+      return list;
+    };
+
+    const renderProducts = () => {
+      const grid = document.getElementById("product-grid");
+      const items = getVisibleProducts();
+
+      if (!items.length) {
+        grid.innerHTML = `<p style="color:var(--muted);">Nenašli sa žiadne produkty pre zadaný filter.</p>`;
+        return;
+      }
+
+      grid.innerHTML = items
+        .map((p) => {
+          const withoutVat = p.price / (1 + VAT_RATE);
+          const isCompared = state.compareIds.includes(p.id);
+          return `
+            <article class="card">
+              <div>
+                <span class="badge">${p.categoryLabel}</span>
+                <h3>${p.name}</h3>
+                <p class="spec">${p.spec}</p>
+              </div>
+              <div>
+                <div class="price">${formatEur(p.price)}</div>
+                <div class="price-vat">bez DPH: ${formatEur(withoutVat)}</div>
+                <div class="card-actions" style="margin-top:12px;">
+                  <button type="button" class="primary" data-add="${p.id}">Do košíka</button>
+                  <button type="button" class="${isCompared ? "active" : ""}" data-compare="${p.id}">
+                    ${isCompared ? "V porovnaní" : "Porovnať"}
+                  </button>
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    };
+
+    const renderCompare = () => {
+      const section = document.getElementById("compare-section");
+      const wrap = document.getElementById("compare-table-wrap");
+      document.getElementById("compare-count").textContent = state.compareIds.length;
+
+      if (!state.compareIds.length) {
+        section.hidden = true;
+        wrap.innerHTML = "";
+        return;
+      }
+
+      const selected = PRODUCTS.filter((p) => state.compareIds.includes(p.id));
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              ${selected.map((p) => `<th>${p.name}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Kategória</td>
+              ${selected.map((p) => `<td>${p.categoryLabel}</td>`).join("")}
+            </tr>
+            <tr>
+              <td>Technické parametre</td>
+              ${selected.map((p) => `<td>${p.spec}</td>`).join("")}
+            </tr>
+            <tr>
+              <td>Záruka</td>
+              ${selected.map((p) => `<td>${p.warranty}</td>`).join("")}
+            </tr>
+            <tr>
+              <td>Cena s DPH</td>
+              ${selected.map((p) => `<td><strong>${formatEur(p.price)}</strong></td>`).join("")}
+            </tr>
+          </tbody>
+        </table>
+      `;
+    };
+
+    const renderCart = () => {
+      const itemsEl = document.getElementById("cart-items");
+      const summaryEl = document.getElementById("cart-summary");
+
+      const totalQty = state.cart.reduce((s, i) => s + i.qty, 0);
+      const totalPrice = state.cart.reduce((s, i) => s + i.qty * i.price, 0);
+      const basePrice = totalPrice / (1 + VAT_RATE);
+      const vatAmount = totalPrice - basePrice;
+      const missingForFreeShip = Math.max(0, FREE_SHIPPING_LIMIT - totalPrice);
+
+      document.getElementById("cart-count").textContent = totalQty;
+      document.getElementById("cart-total").textContent = formatEur(totalPrice);
+
+      if (!state.cart.length) {
+        itemsEl.innerHTML = `<p style="color:var(--muted);">Košík je zatiaľ prázdny.</p>`;
+      } else {
+        itemsEl.innerHTML = state.cart
+          .map(
+            (item) => `
+            <div class="cart-item">
+              <div>
+                <strong>${item.name}</strong>
+                <div class="spec">${formatEur(item.price)} / ks</div>
+              </div>
+              <div class="qty-controls">
+                <button type="button" data-dec="${item.id}">-</button>
+                <span>${item.qty}</span>
+                <button type="button" data-inc="${item.id}">+</button>
+              </div>
+            </div>
+          `
+          )
+          .join("");
+      }
+
+      summaryEl.innerHTML = `
+        <div>Medzisúčet bez DPH: <strong>${formatEur(basePrice)}</strong></div>
+        <div>DPH (23 %): <strong>${formatEur(vatAmount)}</strong></div>
+        <div>Spolu s DPH: <strong>${formatEur(totalPrice)}</strong></div>
+        <div class="${missingForFreeShip === 0 && totalPrice > 0 ? "free-shipping" : "spec"}">
+          ${
+            totalPrice === 0
+              ? `Doprava zadarmo pri nákupe nad ${formatEur(FREE_SHIPPING_LIMIT)}`
+              : missingForFreeShip === 0
+              ? "Máte nárok na dopravu zadarmo!"
+              : `Do dopravy zadarmo chýba ešte ${formatEur(missingForFreeShip)}`
+          }
+        </div>
+      `;
+    };
+
+    document.getElementById("category-buttons").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-category]");
+      if (!btn) return;
+      state.category = btn.dataset.category;
+      document
+        .querySelectorAll("#category-buttons button")
+        .forEach((b) => b.classList.toggle("active", b === btn));
+      renderProducts();
+    });
+
+    document.getElementById("search-input").addEventListener("input", (e) => {
+      state.search = e.target.value;
+      renderProducts();
+    });
+
+    document.getElementById("sort-select").addEventListener("change", (e) => {
+      state.sort = e.target.value;
+      renderProducts();
+    });
+
+    document.getElementById("product-grid").addEventListener("click", (e) => {
+      const addBtn = e.target.closest("[data-add]");
+      if (addBtn) {
+        const id = Number(addBtn.dataset.add);
+        const prod = PRODUCTS.find((p) => p.id === id);
+        if (!prod) return;
+        const found = state.cart.find((i) => i.id === id);
+        if (found) found.qty += 1;
+        else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+        saveCart();
+        renderCart();
+        return;
+      }
+
+      const cmpBtn = e.target.closest("[data-compare]");
+      if (cmpBtn) {
+        const id = Number(cmpBtn.dataset.compare);
+        if (state.compareIds.includes(id)) {
+          state.compareIds = state.compareIds.filter((x) => x !== id);
+        } else {
+          if (state.compareIds.length >= 3) {
+            state.compareIds.shift();
+          }
+          state.compareIds.push(id);
+        }
+        renderProducts();
+        renderCompare();
+        document.getElementById("compare-section").hidden = state.compareIds.length === 0;
+      }
+    });
+
+    document.getElementById("cart-items").addEventListener("click", (e) => {
+      const inc = e.target.closest("[data-inc]");
+      const dec = e.target.closest("[data-dec]");
+      if (inc) {
+        const id = Number(inc.dataset.inc);
+        const item = state.cart.find((i) => i.id === id);
+        if (item) item.qty += 1;
+      } else if (dec) {
+        const id = Number(dec.dataset.dec);
+        const item = state.cart.find((i) => i.id === id);
+        if (item) {
+          item.qty -= 1;
+          if (item.qty <= 0) {
+            state.cart = state.cart.filter((i) => i.id !== id);
+          }
+        }
+      }
+      saveCart();
+      renderCart();
+    });
+
+    const drawer = document.getElementById("cart-drawer");
+    document.getElementById("open-cart-btn").addEventListener("click", () => {
+      drawer.classList.add("open");
+    });
+    document.getElementById("close-cart-btn").addEventListener("click", () => {
+      drawer.classList.remove("open");
+    });
+    drawer.addEventListener("click", (e) => {
+      if (e.target === drawer) drawer.classList.remove("open");
+    });
+
+    document.getElementById("toggle-compare-btn").addEventListener("click", () => {
+      const sec = document.getElementById("compare-section");
+      if (!state.compareIds.length) {
+        alert("Najprv klikni na 'Porovnať' pri aspoň jednom produkte.");
+        return;
+      }
+      sec.hidden = !sec.hidden;
+    });
+
+    document.getElementById("clear-compare-btn").addEventListener("click", () => {
+      state.compareIds = [];
+      renderProducts();
+      renderCompare();
+    });
+
+    document.getElementById("order-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const resultEl = document.getElementById("order-result");
+      if (!state.cart.length) {
+        resultEl.innerHTML = `<div class="order-confirmation" style="border-color:var(--danger); background:rgba(239,68,68,0.14);">Košík je prázdny. Najprv pridaj produkt.</div>`;
+        return;
+      }
+      const data = new FormData(e.target);
+      const orderNum = "VLX-" + Math.floor(100000 + Math.random() * 900000);
+      resultEl.innerHTML = `
+        <div class="order-confirmation">
+          <strong>Objednávka ${orderNum} prijatá (ukážka)</strong><br />
+          Zákazník: ${data.get("fullname")}<br />
+          Doručenie: ${data.get("address")}<br />
+          Doprava a platba: ${data.get("shipping")} · ${data.get("payment")}
+        </div>
+      `;
+      state.cart = [];
+      saveCart();
+      renderCart();
+      e.target.reset();
+    });
+
+    renderProducts();
+    renderCompare();
+    renderCart();
+  </script>
+</body>
+</html>
