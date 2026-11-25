@@ -4,339 +4,92 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#070b12" />
-  <title>VOLTIX RUSH — Hra</title>
+  <title>VOLTIX RUSH</title>
   <style>
-    :root {
-      --bg: #070b12;
-      --panel: #111827;
-      --panel-2: #172236;
-      --border: #24324d;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
-      --good: #22c55e;
-      --shield: #a855f7;
-      --coin: #facc15;
-      --bad: #ef4444;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
     body {
-      background: radial-gradient(circle at top, #101b31 0%, var(--bg) 65%);
-      color: var(--text);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100dvh;
-      padding: 10px;
-      overflow: hidden;
-      touch-action: none;
+      background: #070b12; color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100dvh; padding: 10px; overflow: hidden; touch-action: none;
     }
-
     .hud {
-      width: 100%;
-      max-width: 440px;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 6px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 9px 10px;
-      margin-bottom: 8px;
-      font-size: 0.8rem;
+      width: 100%; max-width: 440px;
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+      background: #111827; border: 1px solid #24324d; border-radius: 12px;
+      padding: 9px 10px; margin-bottom: 8px; font-size: 0.8rem;
     }
-
-    .hud-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    .hud-item { display: flex; flex-direction: column; gap: 2px; }
+    .hud-item span { color: #94a3b8; font-size: 0.65rem; text-transform: uppercase; }
+    .hud-item strong { font-size: 0.92rem; color: #38bdf8; }
+    .good { color: #22c55e !important; }
+    .coin { color: #facc15 !important; }
+    .shield { color: #d8b4fe !important; }
+    .wrap {
+      position: relative; width: 100%; max-width: 440px;
+      aspect-ratio: 9 / 14; max-height: 73dvh;
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid #24324d; background: #0b1220;
     }
-
-    .hud-item span {
-      color: var(--muted);
-      font-size: 0.66rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .hud-item strong {
-      color: var(--accent);
-      font-size: 0.92rem;
-    }
-
-    .hud-item strong.good {
-      color: var(--good);
-    }
-
-    .hud-item strong.coin {
-      color: var(--coin);
-    }
-
-    .hud-item strong.shield {
-      color: #d8b4fe;
-    }
-
-    .game-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 440px;
-      aspect-ratio: 9 / 14;
-      max-height: 73dvh;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: #0b1220;
-      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
-    }
-
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    .top-controls {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 6px;
-      z-index: 3;
-    }
-
+    canvas { width: 100%; height: 100%; display: block; }
+    .top-btns { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 3; }
     .icon-btn {
-      min-width: 36px;
-      height: 36px;
-      padding: 0 9px;
-      border-radius: 10px;
-      background: rgba(17, 24, 39, 0.9);
-      color: var(--text);
-      border: 1px solid var(--border);
-      font-size: 0.86rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(17, 24, 39, 0.9); color: #f8fafc;
+      border: 1px solid #24324d; font-size: 0.88rem; cursor: pointer;
     }
-
     .overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(7, 11, 18, 0.9);
-      backdrop-filter: blur(5px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 18px;
-      gap: 11px;
-      z-index: 4;
-      overflow-y: auto;
+      position: absolute; inset: 0; background: rgba(7, 11, 18, 0.92);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 18px; gap: 11px; z-index: 4; overflow-y: auto;
     }
-
-    .overlay.hidden {
-      display: none;
+    .hidden { display: none !important; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.2rem; }
+    p { color: #94a3b8; font-size: 0.85rem; max-width: 310px; line-height: 1.4; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      background: #38bdf8; color: #051018; border: none; border-radius: 10px;
+      padding: 11px 18px; font-size: 0.92rem; font-weight: 700; cursor: pointer;
     }
-
-    .tag {
-      font-size: 0.7rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent);
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      padding: 4px 10px;
-      border-radius: 999px;
+    .btn-sec {
+      background: #172236; color: #f8fafc; border: 1px solid #24324d; border-radius: 10px;
+      padding: 11px 16px; font-size: 0.88rem; font-weight: 600; cursor: pointer;
     }
-
-    h1 {
-      font-size: 1.85rem;
-      letter-spacing: 0.05em;
+    .shop-list { width: 100%; max-width: 330px; display: grid; gap: 8px; text-align: left; }
+    .card {
+      background: #111827; border: 1px solid #24324d; border-radius: 11px;
+      padding: 9px 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
     }
-
-    h2 {
-      font-size: 1.25rem;
+    .card strong { display: block; font-size: 0.86rem; }
+    .card small { color: #94a3b8; font-size: 0.72rem; }
+    .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; flex-shrink: 0; }
+    .sbtn {
+      border: none; border-radius: 8px; padding: 7px 10px; font-size: 0.75rem;
+      font-weight: 700; cursor: pointer; background: #facc15; color: #161100;
     }
-
-    p {
-      color: var(--muted);
-      font-size: 0.86rem;
-      max-width: 320px;
-      line-height: 1.4;
+    .sbtn.ok { background: #22c55e; color: #041309; }
+    .sbtn.use { background: #38bdf8; color: #051018; }
+    .sbtn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .box {
+      background: #111827; border: 1px solid #24324d; border-radius: 12px;
+      padding: 11px 16px; width: 100%; max-width: 280px; display: grid; gap: 6px;
     }
-
-    .legend {
-      display: flex;
-      gap: 8px 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-      font-size: 0.76rem;
-      color: var(--muted);
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .primary-btn {
-      background: var(--accent);
-      color: #051018;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 20px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      min-width: 150px;
-    }
-
-    .secondary-btn {
-      background: var(--panel-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .shop-list {
-      width: 100%;
-      max-width: 340px;
-      display: grid;
-      gap: 8px;
-      text-align: left;
-    }
-
-    .shop-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      padding: 9px 11px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .shop-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .shop-info strong {
-      font-size: 0.88rem;
-    }
-
-    .shop-info small {
-      color: var(--muted);
-      font-size: 0.74rem;
-    }
-
-    .swatch {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid #fff;
-      flex-shrink: 0;
-    }
-
-    .shop-btn {
-      border: none;
-      border-radius: 8px;
-      padding: 7px 10px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--coin);
-      color: #161100;
-      white-space: nowrap;
-    }
-
-    .shop-btn.equipped {
-      background: var(--good);
-      color: #041309;
-    }
-
-    .shop-btn.equip {
-      background: var(--accent);
-      color: #051018;
-    }
-
-    .shop-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .score-box {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 16px;
-      width: 100%;
-      max-width: 290px;
-      display: grid;
-      gap: 6px;
-    }
-
-    .score-box div {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-    }
-
-    .hint {
-      margin-top: 6px;
-      font-size: 0.76rem;
-      color: var(--muted);
-      text-align: center;
-    }
+    .box div { display: flex; justify-content: space-between; font-size: 0.88rem; }
   </style>
 </head>
 <body>
   <div class="hud">
-    <div class="hud-item">
-      <span>Body</span>
-      <strong id="score-el" class="good">0</strong>
-    </div>
-    <div class="hud-item">
-      <span>Mince</span>
-      <strong id="coins-el" class="coin">0</strong>
-    </div>
-    <div class="hud-item">
-      <span>Rekord</span>
-      <strong id="best-el">0</strong>
-    </div>
-    <div class="hud-item">
-      <span>Úroveň</span>
-      <strong id="level-el">1</strong>
-    </div>
-    <div class="hud-item">
-      <span>Štíty</span>
-      <strong id="shield-el" class="shield">0</strong>
-    </div>
+    <div class="hud-item"><span>Body</span><strong id="score-el" class="good">0</strong></div>
+    <div class="hud-item"><span>Mince</span><strong id="coins-el" class="coin">0</strong></div>
+    <div class="hud-item"><span>Rekord</span><strong id="best-el">0</strong></div>
+    <div class="hud-item"><span>Úroveň</span><strong id="level-el">1</strong></div>
+    <div class="hud-item"><span>Štíty</span><strong id="shield-el" class="shield">0</strong></div>
   </div>
 
-  <div class="game-wrap">
-    <div class="top-controls">
-      <button type="button" class="icon-btn" id="shop-top-btn" title="Obchod a úpravy">🛒</button>
+  <div class="wrap">
+    <div class="top-btns">
+      <button type="button" class="icon-btn" id="shop-top-btn" title="Obchod">🛒</button>
       <button type="button" class="icon-btn" id="sound-btn" title="Zvuk">🔊</button>
       <button type="button" class="icon-btn" id="pause-btn" title="Pauza">⏸</button>
     </div>
@@ -344,34 +97,45 @@
     <canvas id="game" width="360" height="560"></canvas>
 
     <div class="overlay" id="start-overlay">
-      <span class="tag">VOLTIX MINI ARCADE</span>
       <h1>VOLTIX RUSH</h1>
-      <p>Ťukni vľavo/vpravo alebo potiahni prstom. Zbieraj batérie, mince a štíty (viac štítov = viac životov) a vyhni sa skratom.</p>
-      <div class="legend">
-        <span>🔋 +10 bodov</span>
-        <span>🪙 +1 minca</span>
-        <span>🛡️ +1 štít</span>
-        <span>🔴 Skrat</span>
-      </div>
-      <div class="btn-row">
-        <button type="button" class="primary-btn" id="start-btn">Spustiť hru</button>
-        <button type="button" class="secondary-btn" id="open-shop-btn">🛒 Úpravy a obchod</button>
+      <p>Ťukni vľavo/vpravo alebo potiahni prstom. Zbieraj batérie, mince a štíty, a vyhni sa skratom.</p>
+      <div class="row">
+        <button type="button" class="btn" id="start-btn">Spustiť hru</button>
+        <button type="button" class="btn-sec" id="open-shop-btn">🛒 Úpravy a obchod</button>
       </div>
     </div>
 
     <div class="overlay hidden" id="shop-overlay">
-      <span class="tag">OBCHOD A ÚPRAVY</span>
-      <h2>Vylepši loptu a štart</h2>
-      <p>Zostatok mincí: <strong id="shop-coins-el" style="color:var(--coin);">0</strong></p>
-
-      <div class="shop-list" id="shop-skins-list"></div>
-      <div class="shop-list" id="shop-upgrades-list"></div>
-
-      <button type="button" class="primary-btn" id="close-shop-btn">Späť</button>
+      <h2>Obchod a úpravy</h2>
+      <p>Zostatok: <strong id="shop-coins-el" class="coin">0</strong> mincí</p>
+      <div class="shop-list" id="shop-skins"></div>
+      <div class="shop-list" id="shop-upgrades"></div>
+      <button type="button" class="btn" id="close-shop-btn">Späť</button>
     </div>
 
     <div class="overlay hidden" id="pause-overlay">
-      <span
+      <h1>Pauza</h1>
+      <p>Hra je pozastavená.</p>
+      <div class="row">
+        <button type="button" class="btn" id="resume-btn">Pokračovať</button>
+        <button type="button" class="btn-sec" id="pause-shop-btn">🛒 Úpravy</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="gameover-overlay">
+      <h1>Koniec hry</h1>
+      <div class="box">
+        <div><span>Skóre:</span><strong id="final-score">0</strong></div>
+        <div><span>Získané mince:</span><strong id="final-coins" class="coin">0</strong></div>
+        <div><span>Úroveň:</span><strong id="final-level">1</strong></div>
+        <div><span>Rekord:</span><strong id="final-best">0</strong></div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" id="restart-btn">Hrať znova</button>
+        <button type="button" class="btn-sec" id="gameover-shop-btn">🛒 Úpravy</button>
+      </div>
+    </div>
+  </div>
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
@@ -404,18 +168,427 @@
     const pauseBtn = document.getElementById("pause-btn");
     const soundBtn = document.getElementById("sound-btn");
 
-    const BEST_KEY = "voltix_rush_best_v3";
-    const COINS_KEY = "voltix_rush_coins_v3";
-    const SAVE_KEY = "voltix_rush_save_v3";
+    const BEST_KEY = "voltix_rush_best_v4";
+    const COINS_KEY = "voltix_rush_coins_v4";
+    const SAVE_KEY = "voltix_rush_save_v4";
     const MAX_SHIELDS = 5;
 
     const SKINS = [
-      { id: "volt", name: "Volt Modrá", desc: "Klasické elektrické jadro", price: 0, fill: "#38bdf8", stroke: "#e0f2fe", symbol: "⚡" },
-      { id: "gold", name: "Zlatý Blesk", desc: "Žiarivá zlatá lopta", price: 15, fill: "#facc15", stroke: "#fef9c3", symbol: "★" },
-      { id: "neon", name: "Neón Ružová", desc: "Rýchly kyber-štýl", price: 30, fill: "#ec4899", stroke: "#fbcfe8", symbol: "✦" },
-      { id: "inferno", name: "Ohnivé Jadro", desc: "Dravý oranžový náboj", price: 50, fill: "#f97316", stroke: "#ffedd5", symbol: "🔥" }
+      { id: "volt", name: "Volt Modrá", desc: "Klasická lopta", price: 0, fill: "#38bdf8", stroke: "#e0f2fe", sym: "⚡" },
+      { id: "gold", name: "Zlatý Blesk", desc: "Zlatá lopta", price: 15, fill: "#facc15", stroke: "#fef9c3", sym: "★" },
+      { id: "neon", name: "Neón Ružová", desc: "Ružová lopta", price: 30, fill: "#ec4899", stroke: "#fbcfe8", sym: "✦" },
+      { id: "inferno", name: "Ohnivé Jadro", desc: "Oranžová lopta", price: 50, fill: "#f97316", stroke: "#ffedd5", sym: "🔥" }
     ];
 
     const UPGRADES = [
-      { id: "startShield", name: "Štartovací štít", desc: "Začneš každú hru s +1 štítom", price: 25, maxLvl: 1 },
-      { id: "longInvuln", name: "P
+      { id: "startShield", name: "Štartovací štít", desc: "+1 štít na začiatku", price: 25 },
+      { id: "longInvuln", name: "Pevnejšia ochrana", desc: "Dlhšia ochrana po zásahu", price: 35 }
+    ];
+
+    let bestScore = Number(localStorage.getItem(BEST_KEY) || 0);
+    let totalCoins = Number(localStorage.getItem(COINS_KEY) || 0);
+    let saveData = {
+      skin: "volt",
+      owned: ["volt"],
+      upgrades: { startShield: 0, longInvuln: 0 }
+    };
+
+    try {
+      const p = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+      if (p) {
+        saveData = {
+          skin: p.skin || "volt",
+          owned: Array.isArray(p.owned) && p.owned.length ? p.owned : ["volt"],
+          upgrades: {
+            startShield: Number(p.upgrades?.startShield || 0),
+            longInvuln: Number(p.upgrades?.longInvuln || 0)
+          }
+        };
+      }
+    } catch (_) {}
+
+    function saveAll() {
+      localStorage.setItem(BEST_KEY, String(bestScore));
+      localStorage.setItem(COINS_KEY, String(totalCoins));
+      localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+    }
+
+    function updateHud() {
+      bestEl.textContent = String(bestScore);
+      coinsEl.textContent = String(totalCoins);
+      shopCoinsEl.textContent = String(totalCoins);
+    }
+    updateHud();
+
+    let soundOn = true;
+    let audioCtx = null;
+    function beep(freq, dur, type = "sine", vol = 0.07) {
+      if (!soundOn) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        g.gain.setValueAtTime(vol, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+      } catch (_) {}
+    }
+
+    const lanes = [72, 180, 288];
+    const player = { lane: 1, x: lanes[1], y: canvas.height - 76, radius: 20, shields: 0, invuln: 0 };
+    let items = [], particles = [], texts = [];
+    let score = 0, runCoins = 0, combo = 0, level = 1, speed = 225, spawnTimer = 0.25, trackOff = 0;
+    let running = false, paused = false, lastTime = 0, startX = null, backOverlay = startOverlay;
+
+    function updateShieldText() {
+      if (player.shields > 0) {
+        shieldEl.textContent = "🛡".repeat(Math.min(player.shields, 3)) + (player.shields > 3 ? ` +${player.shields - 3}` : "");
+      } else {
+        shieldEl.textContent = "0";
+      }
+    }
+
+    function renderShop() {
+      shopCoinsEl.textContent = String(totalCoins);
+      const skinsBox = document.getElementById("shop-skins");
+      const upgBox = document.getElementById("shop-upgrades");
+      skinsBox.innerHTML = "";
+      upgBox.innerHTML = "";
+
+      for (const s of SKINS) {
+        const has = saveData.owned.includes(s.id);
+        const active = saveData.skin === s.id;
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<div class="dot" style="background:${s.fill}"></div><div style="flex:1"><strong>${s.name}</strong><small>${s.desc}</small></div>`;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "sbtn";
+        if (active) {
+          btn.textContent = "Aktívne"; btn.classList.add("ok"); btn.disabled = true;
+        } else if (has) {
+          btn.textContent = "Zvoliť"; btn.classList.add("use");
+          btn.onclick = () => { saveData.skin = s.id; saveAll(); beep(620, 0.08); renderShop(); drawFrameOnly(); };
+        } else {
+          btn.textContent = `${s.price} 🪙`; btn.disabled = totalCoins < s.price;
+          btn.onclick = () => {
+            if (totalCoins < s.price) return;
+            totalCoins -= s.price; saveData.owned.push(s.id); saveData.skin = s.id;
+            saveAll(); updateHud(); beep(820, 0.12); renderShop(); drawFrameOnly();
+          };
+        }
+        card.appendChild(btn);
+        skinsBox.appendChild(card);
+      }
+
+      for (const u of UPGRADES) {
+        const done = Number(saveData.upgrades[u.id] || 0) >= 1;
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<div style="flex:1"><strong>${u.name}</strong><small>${u.desc}</small></div>`;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "sbtn";
+        if (done) {
+          btn.textContent = "Hotovo"; btn.classList.add("ok"); btn.disabled = true;
+        } else {
+          btn.textContent = `${u.price} 🪙`; btn.disabled = totalCoins < u.price;
+          btn.onclick = () => {
+            if (totalCoins < u.price) return;
+            totalCoins -= u.price; saveData.upgrades[u.id] = 1;
+            saveAll(); updateHud(); beep(860, 0.14); renderShop();
+          };
+        }
+        card.appendChild(btn);
+        upgBox.appendChild(card);
+      }
+    }
+
+    function openShop(from) {
+      backOverlay = from;
+      if (running && !paused) { paused = true; running = false; }
+      startOverlay.classList.add("hidden");
+      pauseOverlay.classList.add("hidden");
+      gameoverOverlay.classList.add("hidden");
+      renderShop();
+      shopOverlay.classList.remove("hidden");
+    }
+
+    function closeShop() {
+      shopOverlay.classList.add("hidden");
+      backOverlay.classList.remove("hidden");
+    }
+    function addSparks(x, y, color, n = 10) {
+      for (let i = 0; i < n; i++) {
+        const a = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+        const v = 50 + Math.random() * 130;
+        particles.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.45 + Math.random() * 0.2, color });
+      }
+    }
+
+    function addPopText(x, y, text, color) {
+      texts.push({ x, y, text, color, life: 0.75 });
+    }
+
+    function resetGame() {
+      score = 0; runCoins = 0; combo = 0; level = 1; speed = 225; spawnTimer = 0.2;
+      items = []; particles = []; texts = [];
+      player.lane = 1; player.x = lanes[1];
+      player.shields = Math.min(MAX_SHIELDS, Number(saveData.upgrades.startShield || 0));
+      player.invuln = 0; paused = false;
+
+      scoreEl.textContent = "0"; levelEl.textContent = "1";
+      updateHud(); updateShieldText();
+
+      startOverlay.classList.add("hidden"); shopOverlay.classList.add("hidden");
+      pauseOverlay.classList.add("hidden"); gameoverOverlay.classList.add("hidden");
+
+      running = true; lastTime = performance.now();
+      beep(520, 0.12, "triangle");
+      requestAnimationFrame(loop);
+    }
+
+    function togglePause() {
+      if (!shopOverlay.classList.contains("hidden")) return;
+      if (!running && !paused) return;
+      if (paused) {
+        paused = false; running = true;
+        pauseOverlay.classList.add("hidden");
+        lastTime = performance.now();
+        requestAnimationFrame(loop);
+      } else {
+        paused = true; running = false;
+        pauseOverlay.classList.remove("hidden");
+      }
+    }
+
+    function endGame() {
+      running = false; paused = false;
+      beep(150, 0.35, "sawtooth", 0.09);
+      addSparks(player.x, player.y, "#ef4444", 18);
+      if (score > bestScore) bestScore = score;
+      saveAll(); updateHud();
+
+      finalScoreEl.textContent = String(score);
+      finalCoinsEl.textContent = String(runCoins);
+      finalLevelEl.textContent = String(level);
+      finalBestEl.textContent = String(bestScore);
+      gameoverOverlay.classList.remove("hidden");
+    }
+
+    function moveLane(d) {
+      if (!running || paused) return;
+      const next = Math.max(0, Math.min(2, player.lane + d));
+      if (next !== player.lane) { player.lane = next; beep(360, 0.05, "sine", 0.04); }
+    }
+
+    function spawnItem() {
+      const lane = Math.floor(Math.random() * 3);
+      const r = Math.random();
+      let type = "hazard", size = 20;
+      if (player.shields < MAX_SHIELDS && r < 0.13) { type = "shield"; size = 17; }
+      else if (r < 0.35) { type = "coin"; size = 15; }
+      else if (r < 0.72) { type = "battery"; size = 16; }
+      items.push({ lane, x: lanes[lane], y: -30, size, type });
+    }
+
+    function drawBg() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.12)";
+      ctx.lineWidth = 1;
+      for (const lx of lanes) { ctx.beginPath(); ctx.moveTo(lx, 0); ctx.lineTo(lx, canvas.height); ctx.stroke(); }
+
+      const gap = 48;
+      const sy = (trackOff % gap) - gap;
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.14)";
+      ctx.setLineDash([12, 36]);
+      for (const lx of [126, 234]) { ctx.beginPath(); ctx.moveTo(lx, sy); ctx.lineTo(lx, canvas.height); ctx.stroke(); }
+      ctx.setLineDash([]);
+    }
+
+    function drawBall() {
+      player.x += (lanes[player.lane] - player.x) * 0.28;
+      if (player.invuln > 0 && Math.floor(player.invuln * 16) % 2 === 0) return;
+      const skin = SKINS.find((s) => s.id === saveData.skin) || SKINS[0];
+
+      ctx.save();
+      if (player.shields > 0) {
+        for (let s = 0; s < Math.min(player.shields, 3); s++) {
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, player.radius + 6 + s * 4, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(168, 85, 247, ${0.9 - s * 0.22})`;
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+        }
+      }
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+      ctx.fillStyle = skin.fill; ctx.fill();
+      ctx.lineWidth = 3; ctx.strokeStyle = skin.stroke; ctx.stroke();
+
+      ctx.fillStyle = "#061018"; ctx.font = "bold 14px system-ui, sans-serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(skin.sym, player.x, player.y + 1);
+      ctx.restore();
+    }
+
+    function drawFrameOnly() {
+      drawBg();
+      drawBall();
+    }
+
+    function drawItems() {
+      for (const it of items) {
+        ctx.save();
+        if (it.type === "battery") {
+          ctx.fillStyle = "#22c55e";
+          ctx.beginPath(); ctx.roundRect(it.x - 13, it.y - 16, 26, 32, 6); ctx.fill();
+          ctx.fillStyle = "#bbf7d0"; ctx.fillRect(it.x - 6, it.y - 21, 12, 5);
+        } else if (it.type === "coin") {
+          ctx.fillStyle = "#facc15";
+          ctx.beginPath(); ctx.arc(it.x, it.y, it.size, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = "#fef08a"; ctx.lineWidth = 2; ctx.stroke();
+          ctx.fillStyle = "#422006"; ctx.font = "bold 12px system-ui, sans-serif";
+          ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("¢", it.x, it.y + 1);
+        } else if (it.type === "shield") {
+          ctx.fillStyle = "#a855f7";
+          ctx.beginPath(); ctx.arc(it.x, it.y, it.size, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = "#f3e8ff"; ctx.lineWidth = 2; ctx.stroke();
+          ctx.fillStyle = "#ffffff"; ctx.font = "bold 13px system-ui, sans-serif";
+          ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🛡", it.x, it.y + 1);
+        } else {
+          ctx.fillStyle = "#ef4444";
+          ctx.beginPath(); ctx.arc(it.x, it.y, it.size, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = "#fecaca"; ctx.lineWidth = 2; ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    function drawEffects(dt) {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        ctx.save(); ctx.globalAlpha = Math.max(0, p.life * 2); ctx.fillStyle = p.color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      }
+      for (let i = texts.length - 1; i >= 0; i--) {
+        const t = texts[i];
+        t.y -= 36 * dt; t.life -= dt;
+        if (t.life <= 0) { texts.splice(i, 1); continue; }
+        ctx.save(); ctx.globalAlpha = Math.min(1, t.life * 1.5); ctx.fillStyle = t.color;
+        ctx.font = "bold 13px system-ui, sans-serif"; ctx.textAlign = "center";
+        ctx.fillText(t.text, t.x, t.y); ctx.restore();
+      }
+    }
+
+    function update(dt) {
+      trackOff += speed * dt;
+      if (player.invuln > 0) player.invuln = Math.max(0, player.invuln - dt);
+
+      spawnTimer -= dt;
+      if (spawnTimer <= 0) {
+        spawnItem();
+        spawnTimer = Math.max(0.35, 0.84 - (level - 1) * 0.045);
+      }
+
+      for (let i = items.length - 1; i >= 0; i--) {
+        const it = items[i];
+        it.y += speed * dt;
+
+        if (Math.abs(it.x - player.x) < player.radius + it.size - 4 && Math.abs(it.y - player.y) < player.radius + it.size - 4) {
+          items.splice(i, 1);
+
+          if (it.type === "battery") {
+            combo += 1;
+            const pts = combo >= 5 ? 15 : 10;
+            score += pts; scoreEl.textContent = String(score);
+            if (score > bestScore) { bestScore = score; saveAll(); updateHud(); }
+
+            const nextLvl = Math.floor(score / 60) + 1;
+            if (nextLvl > level) {
+              level = nextLvl; levelEl.textContent = String(level);
+              speed = 225 + (level - 1) * 30;
+              totalCoins += 2; runCoins += 2; saveAll(); updateHud();
+              addPopText(player.x, player.y - 34, `ÚROVEŇ ${level}! +2 🪙`, "#38bdf8");
+            }
+            beep(620 + Math.min(combo * 25, 250), 0.09, "triangle", 0.06);
+            addSparks(player.x, player.y - 12, "#22c55e", 8);
+            addPopText(it.x, it.y - 10, `+${pts}`, "#22c55e");
+          } else if (it.type === "coin") {
+            totalCoins += 1; runCoins += 1; saveAll(); updateHud();
+            beep(880, 0.11); addSparks(it.x, it.y, "#facc15", 9); addPopText(it.x, it.y - 10, "+1 🪙", "#facc15");
+          } else if (it.type === "shield") {
+            player.shields = Math.min(MAX_SHIELDS, player.shields + 1);
+            updateShieldText(); beep(760 + player.shields * 60, 0.14);
+            addSparks(player.x, player.y, "#a855f7", 12);
+            addPopText(it.x, it.y - 10, `+1 ŠTÍT (${player.shields})`, "#d8b4fe");
+          } else {
+            if (player.invuln > 0) continue;
+            if (player.shields > 0) {
+              player.shields -= 1;
+              player.invuln = saveData.upgrades.longInvuln ? 1.45 : 0.8;
+              combo = 0; updateShieldText(); beep(240, 0.16, "square", 0.05);
+              addSparks(player.x, player.y, "#a855f7", 14);
+              addPopText(it.x, it.y - 10, `ŠTÍT ZNIČENÝ (${player.shields})`, "#e9d5ff");
+            } else {
+              endGame(); return;
+            }
+          }
+          continue;
+        }
+
+        if (it.y > canvas.height + 40) {
+          if (it.type === "battery") combo = 0;
+          items.splice(i, 1);
+        }
+      }
+    }
+
+    function loop(now) {
+      if (!running) return;
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+
+      drawBg(); update(dt); drawItems(); drawBall(); drawEffects(dt);
+      requestAnimationFrame(loop);
+    }
+
+    canvas.addEventListener("pointerdown", (e) => { startX = e.clientX; });
+    canvas.addEventListener("pointerup", (e) => {
+      if (startX === null || !running || paused) return;
+      const diff = e.clientX - startX;
+      if (Math.abs(diff) > 24) moveLane(diff > 0 ? 1 : -1);
+      else {
+        const rect = canvas.getBoundingClientRect();
+        moveLane(e.clientX - rect.left < rect.width / 2 ? -1 : 1);
+      }
+      startX = null;
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") moveLane(-1);
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") moveLane(1);
+      if (e.key === "p" || e.key === "P" || e.key === "Escape") togglePause();
+    });
+
+    startBtn.onclick = resetGame;
+    openShopBtn.onclick = () => openShop(startOverlay);
+    shopTopBtn.onclick = () => openShop(paused ? pauseOverlay : startOverlay);
+    pauseShopBtn.onclick = () => openShop(pauseOverlay);
+    gameoverShopBtn.onclick = () => openShop(gameoverOverlay);
+    closeShopBtn.onclick = closeShop;
+    resumeBtn.onclick = togglePause;
+    restartBtn.onclick = resetGame;
+    pauseBtn.onclick = togglePause;
+    soundBtn.onclick = () => { soundOn = !soundOn; soundBtn.textContent = soundOn ? "🔊" : "🔇"; };
+
+    drawFrameOnly();
+  </script>
+</body>
+</html>
