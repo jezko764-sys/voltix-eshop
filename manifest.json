@@ -1,0 +1,310 @@
+{
+  "name": "VOLTIX RUSH",
+  "short_name": "VOLTIX RUSH",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070b12",
+  "theme_color": "#070b12",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#070b12" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VOLTIX RUSH" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+  <title>VOLTIX RUSH</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: radial-gradient(circle at top, #12203a 0%, #070b12 68%);
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100dvh; padding: 10px; overflow: hidden; touch-action: none;
+    }
+    .hud {
+      width: 100%; max-width: 440px;
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+      background: rgba(17, 24, 39, 0.92); border: 1px solid #24324d; border-radius: 12px;
+      padding: 9px 10px; margin-bottom: 8px; font-size: 0.8rem;
+    }
+    .hud-item { display: flex; flex-direction: column; gap: 2px; }
+    .hud-item span { color: #94a3b8; font-size: 0.65rem; text-transform: uppercase; }
+    .hud-item strong { font-size: 0.92rem; color: #38bdf8; }
+    .good { color: #22c55e !important; }
+    .coin { color: #facc15 !important; }
+    .shield { color: #d8b4fe !important; }
+    .wrap {
+      position: relative; width: 100%; max-width: 440px;
+      aspect-ratio: 9 / 14; max-height: 73dvh;
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid #24324d; background: #0b1220;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+    }
+    canvas { width: 100%; height: 100%; display: block; }
+    .top-btns { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 3; }
+    .icon-btn {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(17, 24, 39, 0.92); color: #f8fafc;
+      border: 1px solid #24324d; font-size: 0.88rem; cursor: pointer;
+    }
+    .overlay {
+      position: absolute; inset: 0; background: rgba(7, 11, 18, 0.93);
+      backdrop-filter: blur(4px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 18px; gap: 11px; z-index: 4; overflow-y: auto;
+    }
+    .hidden { display: none !important; }
+    .app-badge {
+      width: 72px; height: 72px; border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #385582;
+      box-shadow: 0 10px 26px rgba(56, 189, 248, 0.25);
+    }
+    .app-badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    h1 { font-size: 1.8rem; letter-spacing: 0.04em; }
+    h2 { font-size: 1.2rem; }
+    p { color: #94a3b8; font-size: 0.85rem; max-width: 310px; line-height: 1.4; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      background: #38bdf8; color: #051018; border: none; border-radius: 10px;
+      padding: 11px 18px; font-size: 0.92rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-sec {
+      background: #172236; color: #f8fafc; border: 1px solid #24324d; border-radius: 10px;
+      padding: 11px 16px; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+    }
+    .shop-list { width: 100%; max-width: 335px; display: grid; gap: 8px; text-align: left; }
+    .card {
+      background: #111827; border: 1px solid #24324d; border-radius: 11px;
+      padding: 9px 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .card strong { display: block; font-size: 0.86rem; }
+    .card small { color: #94a3b8; font-size: 0.72rem; }
+    .dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; flex-shrink: 0; }
+    .sbtn {
+      border: none; border-radius: 8px; padding: 7px 10px; font-size: 0.75rem;
+      font-weight: 700; cursor: pointer; background: #facc15; color: #161100;
+    }
+    .sbtn.ok { background: #22c55e; color: #041309; }
+    .sbtn.use { background: #38bdf8; color: #051018; }
+    .sbtn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .box {
+      background: #111827; border: 1px solid #24324d; border-radius: 12px;
+      padding: 11px 16px; width: 100%; max-width: 280px; display: grid; gap: 6px;
+    }
+    .box div { display: flex; justify-content: space-between; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div class="hud-item"><span>Body</span><strong id="score-el" class="good">0</strong></div>
+    <div class="hud-item"><span>Mince</span><strong id="coins-el" class="coin">0</strong></div>
+    <div class="hud-item"><span>Rekord</span><strong id="best-el">0</strong></div>
+    <div class="hud-item"><span>Úroveň</span><strong id="level-el">1</strong></div>
+    <div class="hud-item"><span>Štíty</span><strong id="shield-el" class="shield">0</strong></div>
+  </div>
+
+  <div class="wrap">
+    <div class="top-btns">
+      <button type="button" class="icon-btn" id="shop-top-btn" title="Obchod">🛒</button>
+      <button type="button" class="icon-btn" id="sound-btn" title="Zvuk">🔊</button>
+      <button type="button" class="icon-btn" id="pause-btn" title="Pauza">⏸</button>
+    </div>
+
+    <canvas id="game" width="360" height="560"></canvas>
+
+    <div class="overlay" id="start-overlay">
+      <div class="app-badge">
+        <img src="icon-192.png" alt="VOLTIX RUSH ikona" />
+      </div>
+      <h1>VOLTIX RUSH</h1>
+      <p>Ťukni vľavo/vpravo alebo potiahni prstom. Zbieraj batérie, mince a štíty, a vyhni sa skratom.</p>
+      <div class="row">
+        <button type="button" class="btn" id="start-btn">Spustiť hru</button>
+        <button type="button" class="btn-sec" id="open-shop-btn">🛒 Úpravy a obchod</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="shop-overlay">
+      <h2>Obchod a úpravy</h2>
+      <p>Zostatok: <strong id="shop-coins-el" class="coin">0</strong> mincí</p>
+      <div class="shop-list" id="shop-skins"></div>
+      <div class="shop-list" id="shop-upgrades"></div>
+      <button type="button" class="btn" id="close-shop-btn">Späť</button>
+    </div>
+
+    <div class="overlay hidden" id="pause-overlay">
+      <h1>Pauza</h1>
+      <p>Hra je pozastavená.</p>
+      <div class="row">
+        <button type="button" class="btn" id="resume-btn">Pokračovať</button>
+        <button type="button" class="btn-sec" id="pause-shop-btn">🛒 Úpravy</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="gameover-overlay">
+      <h1>Koniec hry</h1>
+      <div class="box">
+        <div><span>Skóre:</span><strong id="final-score">0</strong></div>
+        <div><span>Získané mince:</span><strong id="final-coins" class="coin">0</strong></div>
+        <div><span>Úroveň:</span><strong id="final-level">1</strong></div>
+        <div><span>Rekord:</span><strong id="final-best">0</strong></div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" id="restart-btn">Hrať znova</button>
+        <button type="button" class="btn-sec" id="gameover-shop-btn">🛒 Úpravy</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+
+    const scoreEl = document.getElementById("score-el");
+    const coinsEl = document.getElementById("coins-el");
+    const bestEl = document.getElementById("best-el");
+    const levelEl = document.getElementById("level-el");
+    const shieldEl = document.getElementById("shield-el");
+    const shopCoinsEl = document.getElementById("shop-coins-el");
+
+    const finalScoreEl = document.getElementById("final-score");
+    const finalCoinsEl = document.getElementById("final-coins");
+    const finalLevelEl = document.getElementById("final-level");
+    const finalBestEl = document.getElementById("final-best");
+
+    const startOverlay = document.getElementById("start-overlay");
+    const shopOverlay = document.getElementById("shop-overlay");
+    const pauseOverlay = document.getElementById("pause-overlay");
+    const gameoverOverlay = document.getElementById("gameover-overlay");
+
+    const startBtn = document.getElementById("start-btn");
+    const openShopBtn = document.getElementById("open-shop-btn");
+    const shopTopBtn = document.getElementById("shop-top-btn");
+    const pauseShopBtn = document.getElementById("pause-shop-btn");
+    const gameoverShopBtn = document.getElementById("gameover-shop-btn");
+    const closeShopBtn = document.getElementById("close-shop-btn");
+    const resumeBtn = document.getElementById("resume-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const pauseBtn = document.getElementById("pause-btn");
+    const soundBtn = document.getElementById("sound-btn");
+
+    const BEST_KEY = "voltix_rush_best_v5";
+    const COINS_KEY = "voltix_rush_coins_v5";
+    const SAVE_KEY = "voltix_rush_save_v5";
+    const MAX_SHIELDS = 5;
+
+    const SKINS = [
+      { id: "volt", name: "Volt Modrá", desc: "Klasické elektrické jadro", price: 0, fill: "#38bdf8", stroke: "#e0f2fe", sym: "⚡", special: "none" },
+      { id: "rainbow", name: "Dúhový Reaktor", desc: "Plynule mení farby celým spektrom", price: 20, fill: "linear-gradient(135deg,#ef4444,#facc15,#22c55e,#38bdf8,#a855f7)", stroke: "#ffffff", sym: "🌈", special: "rainbow" },
+      { id: "galaxy", name: "Galaxia", desc: "Vesmírny stred s hviezdami a prstencom", price: 35, fill: "radial-gradient(circle at 35% 35%,#6d28d9,#1e1b4b 65%,#090d16)", stroke: "#c4b5fd", sym: "✦", special: "galaxy" },
+      { id: "plasma", name: "Plazma Blesk", desc: "Pulzujúci elektrický prstenec", price: 50, fill: "#06b6d4", stroke: "#a5f3fc", sym: "⚡", special: "plasma" },
+      { id: "diamond", name: "Kryštál", desc: "Lesklý ľadovo-diamantový odlesk", price: 70, fill: "linear-gradient(135deg,#e0f2fe,#7dd3fc,#bae6fd)", stroke: "#ffffff", sym: "◆", special: "diamond" }
+    ];
+
+    const UPGRADES = [
+      { id: "startShield", name: "Štartovací štít", desc: "+1 štít na začiatku každej hry", price: 25 },
+      { id: "longInvuln", name: "Pevnejšia ochrana", desc: "Dlhšia nezraniteľnosť po zásahu", price: 35 }
+    ];
+
+    let bestScore = Number(localStorage.getItem(BEST_KEY) || 0);
+    let totalCoins = Number(localStorage.getItem(COINS_KEY) || 0);
+    let saveData = {
+      skin: "volt",
+      owned: ["volt"],
+      upgrades: { startShield: 0, longInvuln: 0 }
+    };
+
+    try {
+      const p = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+      if (p) {
+        saveData = {
+          skin: p.skin || "volt",
+          owned: Array.isArray(p.owned) && p.owned.length ? p.owned : ["volt"],
+          upgrades: {
+            startShield: Number(p.upgrades?.startShield || 0),
+            longInvuln: Number(p.upgrades?.longInvuln || 0)
+          }
+        };
+      }
+    } catch (_) {}
+
+    function saveAll() {
+      localStorage.setItem(BEST_KEY, String(bestScore));
+      localStorage.setItem(COINS_KEY, String(totalCoins));
+      localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+    }
+
+    function updateHud() {
+      bestEl.textContent = String(bestScore);
+      coinsEl.textContent = String(totalCoins);
+      shopCoinsEl.textContent = String(totalCoins);
+    }
+    updateHud();
+
+    let soundOn = true;
+    let audioCtx = null;
+    function beep(freq, dur, type = "sine", vol = 0.07) {
+      if (!soundOn) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        g.gain.setValueAtTime(vol, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+      } catch (_) {}
+    }
+
+    const lanes = [72, 180, 288];
+    const player = { lane: 1, x: lanes[1], y: canvas.height - 76, radius: 20, shields: 0, invuln: 0 };
+    let items = [], particles = [], texts = [], trail = [];
+    let score = 0, runCoins = 0, combo = 0, level = 1, speed = 225, spawnTimer = 0.25, trackOff = 0, shake = 0;
+    let running = false, paused = false, lastTime = 0, startX = null, backOverlay = startOverlay;
+
+    function updateShieldText() {
+      if (player.shields > 0) {
+        shieldEl.textContent = "🛡".repeat(Math.min(player.shields, 3)) + (player.shields > 3 ? ` +${player.shields - 3}` : "");
+      } else {
+        shieldEl.textContent = "0";
+      }
+    }
+
+    function renderShop() {
+      shopCoinsEl.textContent = String(totalCoins);
+      const skinsBox = document.getElementById("shop-skins");
+      const upgBox = document.getElementById("shop-upgrades");
+      skinsBox.innerHTML = "";
+      upgBox.innerHTML = "";
+
+      for (const s of SKINS) {
+        const has = saveData.owned.includes(s.id);
+        const active = saveData.skin === s.id;
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<div class="dot" style="background:${s.fill}"></div><div style="flex:1">
